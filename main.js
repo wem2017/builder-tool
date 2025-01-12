@@ -121,6 +121,7 @@ const updateLogo = async (platform, framework, link) => {
 
 };
 
+// update splash screen
 const updateSplash = async (platform, framework, link) => {
     try {
         await downloadImage(link, path.resolve(__dirname, '../logo.png'));
@@ -155,19 +156,68 @@ const updateSplash = async (platform, framework, link) => {
 
 };
 
-const updateDomain = async (domain) => {
-    replaceTextInFile("https://demo.listarapp.com", domain, "../lib/configs/application.dart");
+// update domain
+const updateDomain = async (framework, domain) => {
+    if (framework === "react-native") {
+        console.log("React Native TODO");
+    } else if (framework === "flutter") {
+        replaceTextInFile("https://demo.listarapp.com", domain, "../lib/configs/application.dart");
+    }
     console.log("Domain updated.\n");
 }
 
-const updateColor = async (primary, secondary) => {
-    if (primary) {
-        replaceTextInFile(`"primary": 'ffe5634d',`, `"primary": '${primary}',`, "../lib/configs/theme.dart");
-    }
-    if (secondary) {
-        replaceTextInFile(`"secondary": "ff4a91a4",`, `"secondary": '${secondary}',`, "../lib/configs/theme.dart");
+const updateColor = async (framework, primary) => {
+    if (framework === "react-native") {
+        console.log("React Native TODO");
+    } else if (framework === "flutter") {
+        replaceTextInFile(`"primary": 'ffe5634d',`, `"primary": 'ff${primary}',`, "../lib/configs/theme.dart");
     }
     console.log("Color updated.\n");
+}
+
+const updateApiKey = async (platform, framework, key) => {
+    if (framework === "react-native") {
+        console.log("React Native TODO");
+    } else if (framework === "flutter") {
+        if (platform === "ios") {
+            replaceTextInFile("AIzaSyDg1evvc68xACuU2RsbBiV5uoF0vwVNM8Y", key, "../ios/Runner/AppDelegate.swift");
+        } else if (platform === "android") {
+            replaceTextInFile("AIzaSyDg1evvc68xACuU2RsbBiV5uoF0vwVNM8Y", key, "../android/app/src/main/AndroidManifest.xml");
+        } else {
+            replaceTextInFile("AIzaSyDg1evvc68xACuU2RsbBiV5uoF0vwVNM8Y", key, "../ios/Runner/AppDelegate.swift");
+            replaceTextInFile("AIzaSyDg1evvc68xACuU2RsbBiV5uoF0vwVNM8Y", key, "../android/app/src/main/AndroidManifest.xml");
+        }
+    }
+
+    console.log("Api Key updated.\n");
+}
+
+const updateFirebaseIOS = async (link) => {
+    try {
+        await downloadImage(link, path.resolve(__dirname, '../ios/Runner/GoogleService-Info.plist'));
+        console.log("Updated firebase iOS.\n");
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const updateFirebaseAndroid = async (link) => {
+    try {
+        await downloadImage(link, path.resolve(__dirname, '../android/app/google-services.json'));
+        console.log("Updated firebase Android.\n");
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const updateAdmobIOS = async (key) => {
+    replaceTextInFile("ca-app-pub-3940256099942544~1458002511", key, "../ios/Runner/Info.plist");
+    console.log("Updated admob iOS.\n");
+}
+
+const updateAdmobAndroid = async (key) => {
+    replaceTextInFile("ca-app-pub-3940256099942544~3347511713", key, "../android/app/src/main/AndroidManifest.xml");
+    console.log("Updated admob Android.\n");
 }
 
 const main = async () => {
@@ -181,7 +231,11 @@ const main = async () => {
         splashLogo: args.find(arg => arg.startsWith("--splash-logo="))?.split("=")[1],
         domain: args.find(arg => arg.startsWith("--domain="))?.split("=")[1],
         primaryColor: args.find(arg => arg.startsWith("--primary-color="))?.split("=")[1],
-        secondaryColor: args.find(arg => arg.startsWith("--secondary-color="))?.split("=")[1],
+        apiKey: args.find(arg => arg.startsWith("--api-key="))?.split("=")[1],
+        firebaseIOS: args.find(arg => arg.startsWith("--firebase-ios="))?.split("=")[1],
+        firebaseAndroid: args.find(arg => arg.startsWith("--firebase-android="))?.split("=")[1],
+        admobIOS: args.find(arg => arg.startsWith("--admob-ios="))?.split("=")[1],
+        admobAndroid: args.find(arg => arg.startsWith("--admob-android="))?.split("=")[1],
     };
 
     try {
@@ -205,12 +259,37 @@ const main = async () => {
 
         if (config.domain) {
             console.log(`Step: Updating domain...${config.domain}`);
-            await updateDomain(config.domain);
+            await updateDomain(config.framework, config.domain);
         }
 
-        if (config.primaryColor || config.secondaryColor) {
+        if (config.primaryColor) {
             console.log(`Step: Updating color...${config.domain}`);
-            await updateColor(config.primaryColor, config.secondaryColor);
+            await updateColor(config.framework, config.primaryColor);
+        }
+
+        if (config.apiKey) {
+            console.log(`Step: Updating google Api Key...${config.apiKey}`);
+            await updateApiKey(config.platform, config.framework, config.apiKey);
+        }
+
+        if (config.firebaseIOS) {
+            console.log(`Step: Updating GoogleService-Info.plist ...${config.firebaseIOS}`);
+            await updateFirebaseIOS(config.firebaseIOS);
+        }
+
+        if (config.firebaseAndroid) {
+            console.log(`Step: Updating google-services.json ...${config.firebaseAndroid}`);
+            await updateFirebaseAndroid(config.firebaseAndroid);
+        }
+
+        if (config.admobIOS) {
+            console.log(`Step: Updating admob iOS ...${config.admobIOS}`);
+            await updateAdmobIOS(config.admobIOS);
+        }
+
+        if (config.admobAndroid) {
+            console.log(`Step: Updating admob Android ...${config.admobAndroid}`);
+            await updateAdmobAndroid(config.admobAndroid);
         }
 
         console.log("All steps completed successfully.\n");
