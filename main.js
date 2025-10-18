@@ -62,31 +62,22 @@ const validateConfig = (config) => {
     if (!["react-native", "flutter"].includes(config.framework)) {
         throw new Error("Invalid framework. Choose 'react-native' or 'flutter'.");
     }
-    if (!["ios", "android", "all"].includes(config.platform)) {
-        throw new Error("Invalid platform. Choose 'ios', 'android', or 'all'.");
-    }
     console.log("Configuration is success.\n");
 };
 
 // Update app name
-const updateAppName = async (platform, framework, name) => {
+const updateAppName = async (framework, name) => {
     if (framework === "react-native") {
         console.log("React Native TODO");
     } else if (framework === "flutter") {
-        if (platform === "android") {
-            replaceTextInFile("android:label=\"Listar FluxPro\"", `android:label="${name}"`, "../android/app/src/main/AndroidManifest.xml");
-        } else if (platform === "ios") {
-            replaceTextInFile("<string>Listar FluxPro</string>", `<string>${name}</string>`, "../ios/Runner/Info.plist");
-        } else {
-            replaceTextInFile("android:label=\"Listar FluxPro\"", `android:label="${name}"`, "../android/app/src/main/AndroidManifest.xml");
-            replaceTextInFile("<string>Listar FluxPro</string>", `<string>${name}</string>`, "../ios/Runner/Info.plist");
-        }
+        replaceTextInFile("android:label=\"Listar FluxPro\"", `android:label="${name}"`, "../android/app/src/main/AndroidManifest.xml");
+        replaceTextInFile("<string>Listar FluxPro</string>", `<string>${name}</string>`, "../ios/Runner/Info.plist");
     }
     console.log("App name updated.\n");
 };
 
 // Copy logo
-const updateLogo = async (platform, framework, link) => {
+const updateLogo = async (framework, link) => {
     try {
         await downloadImage(link, path.resolve(__dirname, '../icons_launcher.png'));
 
@@ -98,13 +89,7 @@ const updateLogo = async (platform, framework, link) => {
                 "  image_path: \"icons_launcher.png\"\n" +
                 "  platforms:\n", "../pubspec.yaml");
 
-            if (platform === "ios") {
-                replaceTextInFile("platforms:", "platforms:\n    ios:\n      enable: true", "../pubspec.yaml");
-            } else if (platform === "android") {
-                replaceTextInFile("platforms:", "platforms:\n    android:\n      enable: true", "../pubspec.yaml");
-            } else {
-                replaceTextInFile("platforms:", "platforms:\n    ios:\n      enable: true\n    android:\n      enable: true", "../pubspec.yaml");
-            }
+            replaceTextInFile("platforms:", "platforms:\n    ios:\n      enable: true\n    android:\n      enable: true", "../pubspec.yaml");
 
             console.log("Installing icons_launcher package...");
             execSync('flutter pub add --dev icons_launcher', {cwd: path.resolve(__dirname, '../')});
@@ -122,7 +107,7 @@ const updateLogo = async (platform, framework, link) => {
 };
 
 // update splash screen
-const updateSplash = async (platform, framework, link) => {
+const updateSplash = async (framework, link) => {
     try {
         await downloadImage(link, path.resolve(__dirname, '../logo.png'));
 
@@ -130,22 +115,12 @@ const updateSplash = async (platform, framework, link) => {
             console.log("React Native TODO");
         } else if (framework === "flutter") {
             copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../assets/images/logo.png'));
-            if (platform === "ios") {
-                copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../ios/Runner/Assets.xcassets/icon.imageset/icon.png'));
-            } else if (platform === "android") {
-                copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-hdpi/ic_logo.png'));
-                copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-mdpi/ic_logo.png'));
-                copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-xhdpi/ic_logo.png'));
-                copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-xxhdpi/ic_logo.png'));
-                copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-xxxhdpi/ic_logo.png'));
-            } else {
-                copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../ios/Runner/Assets.xcassets/icon.imageset/icon.png'));
-                copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-hdpi/ic_logo.png'));
-                copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-mdpi/ic_logo.png'));
-                copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-xhdpi/ic_logo.png'));
-                copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-xxhdpi/ic_logo.png'));
-                copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-xxxhdpi/ic_logo.png'));
-            }
+            copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../ios/Runner/Assets.xcassets/icon.imageset/icon.png'));
+            copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-hdpi/ic_logo.png'));
+            copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-mdpi/ic_logo.png'));
+            copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-xhdpi/ic_logo.png'));
+            copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-xxhdpi/ic_logo.png'));
+            copyFile(path.resolve(__dirname, '../logo.png'), path.resolve(__dirname, '../android/app/src/main/res/drawable-xxxhdpi/ic_logo.png'));
         }
 
         console.log("splashscreen updated.\n");
@@ -175,18 +150,12 @@ const updateColor = async (framework, primary) => {
     console.log("Color updated.\n");
 }
 
-const updateApiKey = async (platform, framework, key) => {
+const updateApiKey = async (framework, key) => {
     if (framework === "react-native") {
         console.log("React Native TODO");
     } else if (framework === "flutter") {
-        if (platform === "ios") {
-            replaceTextInFile("AIzaSyDg1evvc68xACuU2RsbBiV5uoF0vwVNM8Y", key, "../ios/Runner/AppDelegate.swift");
-        } else if (platform === "android") {
-            replaceTextInFile("AIzaSyDg1evvc68xACuU2RsbBiV5uoF0vwVNM8Y", key, "../android/app/src/main/AndroidManifest.xml");
-        } else {
-            replaceTextInFile("AIzaSyDg1evvc68xACuU2RsbBiV5uoF0vwVNM8Y", key, "../ios/Runner/AppDelegate.swift");
-            replaceTextInFile("AIzaSyDg1evvc68xACuU2RsbBiV5uoF0vwVNM8Y", key, "../android/app/src/main/AndroidManifest.xml");
-        }
+        replaceTextInFile("AIzaSyDg1evvc68xACuU2RsbBiV5uoF0vwVNM8Y", key, "../ios/Runner/AppDelegate.swift");
+        replaceTextInFile("AIzaSyDg1evvc68xACuU2RsbBiV5uoF0vwVNM8Y", key, "../android/app/src/main/AndroidManifest.xml");
     }
 
     console.log("Api Key updated.\n");
@@ -225,7 +194,6 @@ const main = async () => {
 
     const config = {
         framework: args.find(arg => arg.startsWith("--framework="))?.split("=")[1],
-        platform: args.find(arg => arg.startsWith("--platform="))?.split("=")[1],
         name: args.find(arg => arg.startsWith("--name="))?.split("=")[1],
         logo: args.find(arg => arg.startsWith("--logo="))?.split("=")[1],
         splashLogo: args.find(arg => arg.startsWith("--splash-logo="))?.split("=")[1],
@@ -244,17 +212,17 @@ const main = async () => {
 
         if (config.name) {
             console.log(`Step: Updating app name...${config.name}`);
-            await updateAppName(config.platform, config.framework, config.name);
+            await updateAppName(config.framework, config.name);
         }
 
         if (config.logo) {
             console.log(`Step: Updating logo...${config.logo}`);
-            await updateLogo(config.platform, config.framework, config.logo);
+            await updateLogo(config.framework, config.logo);
         }
 
         if (config.splashLogo) {
             console.log(`Step: Updating splash logo...${config.splashLogo}`);
-            await updateSplash(config.platform, config.framework, config.splashLogo);
+            await updateSplash(config.framework, config.splashLogo);
         }
 
         if (config.domain) {
@@ -269,7 +237,7 @@ const main = async () => {
 
         if (config.apiKey) {
             console.log(`Step: Updating google Api Key...${config.apiKey}`);
-            await updateApiKey(config.platform, config.framework, config.apiKey);
+            await updateApiKey(config.framework, config.apiKey);
         }
 
         if (config.firebaseIOS) {
