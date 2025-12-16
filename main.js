@@ -74,12 +74,12 @@ const updateAppName = async (platform, framework, name) => {
         console.log("React Native TODO");
     } else if (framework === "flutter") {
         if (platform === "android") {
-            replaceTextInFile("android:label=\"Listar FluxPro\"", `android:label="${name}"`, "../android/app/src/main/AndroidManifest.xml");
+            replaceTextInFile("android:label=\"Listar Flux Directory\"", `android:label="${name}"`, "../android/app/src/main/AndroidManifest.xml");
         } else if (platform === "ios") {
-            replaceTextInFile("<string>Listar FluxPro</string>", `<string>${name}</string>`, "../ios/Runner/Info.plist");
+            replaceTextInFile("<string>Listar Flux Directory</string>", `<string>${name}</string>`, "../ios/Runner/Info.plist");
         } else {
-            replaceTextInFile("android:label=\"Listar FluxPro\"", `android:label="${name}"`, "../android/app/src/main/AndroidManifest.xml");
-            replaceTextInFile("<string>Listar FluxPro</string>", `<string>${name}</string>`, "../ios/Runner/Info.plist");
+            replaceTextInFile("android:label=\"Listar Flux Directory\"", `android:label="${name}"`, "../android/app/src/main/AndroidManifest.xml");
+            replaceTextInFile("<string>Listar Flux Directory</string>", `<string>${name}</string>`, "../ios/Runner/Info.plist");
         }
     }
     console.log("App name updated.\n");
